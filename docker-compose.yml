@@ -1,0 +1,77 @@
+version: "3.7"
+
+networks:
+  local-lalahtalks:
+    driver: overlay
+    name: local-lalahtalks
+
+services:
+  local-keycloak:
+    image: jboss/keycloak:latest
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 512M
+    networks:
+      - local-lalahtalks
+    ports:
+      - 18080:8080
+    env_file: services/local-keycloak/.env
+    volumes:
+      - "./services/local-keycloak/lalahtalks-realm.json:/tmp/lalahtalks-realm.json"
+
+  local-postgres:
+    image: postgres:alpine
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 128M
+    networks:
+      - local-lalahtalks
+    ports:
+      - 15432:5432
+    env_file: services/local-postgres/.env
+    volumes:
+      - "./services/local-postgres/init:/docker-entrypoint-initdb.d"
+
+  accounts-server:
+    image: lalahtalks/accounts-server:latest
+    depends_on:
+      - local-postgres
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+    networks:
+      - local-lalahtalks
+    env_file:
+      - services/accounts-server/.env
+
+  user-gateway-server:
+    image: lalahtalks/user-gateway-server:latest
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+    networks:
+      - local-lalahtalks
+    env_file:
+      - services/user-gateway-server/.env
+
+  local-nginx:
+    image: nginx:stable-alpine
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 64M
+    networks:
+      - local-lalahtalks
+    volumes:
+      - "./services/local-nginx/default.conf:/etc/nginx/conf.d/default.conf:ro"
+    ports:
+      - 180:80
