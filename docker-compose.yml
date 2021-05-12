@@ -19,7 +19,7 @@ services:
       - 18080:8080
     env_file: services/local-keycloak/.env
     volumes:
-      - "./services/local-keycloak/lalahtalks-realm.json:/tmp/lalahtalks-realm.json"
+      - "./services/local-keycloak/realm:/tmp/keycloak"
 
   local-postgres:
     image: postgres:alpine
