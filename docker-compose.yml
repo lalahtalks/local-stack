@@ -50,6 +50,20 @@ services:
     env_file:
       - services/accounts-server/.env
 
+  secrets-server:
+    image: lalahtalks/secrets-server:latest
+    depends_on:
+      - local-postgres
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+    networks:
+      - local-lalahtalks
+    env_file:
+      - services/secrets-server/.env
+
   user-gateway-server:
     image: lalahtalks/user-gateway-server:latest
     deploy:
