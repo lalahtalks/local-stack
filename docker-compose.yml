@@ -16,7 +16,7 @@ services:
     networks:
       - local-lalahtalks
     ports:
-      - 18080:8080
+      - "18080:8080"
     env_file: services/local-keycloak/.env
     volumes:
       - "./services/local-keycloak/realm:/tmp/keycloak"
@@ -31,7 +31,7 @@ services:
     networks:
       - local-lalahtalks
     ports:
-      - 15432:5432
+      - "15432:5432"
     env_file: services/local-postgres/.env
     volumes:
       - "./services/local-postgres/init:/docker-entrypoint-initdb.d"
@@ -88,4 +88,4 @@ services:
     volumes:
       - "./services/local-nginx/default.conf:/etc/nginx/conf.d/default.conf:ro"
     ports:
-      - 180:80
+      - "80:80"
